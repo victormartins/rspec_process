@@ -1,0 +1,1 @@
+ - Enable piping text to the script. Example:   rspec spec | rspec_processor
