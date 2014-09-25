@@ -12,13 +12,24 @@ class RspecProcessor
     end
 
     @memory.each{ |l| puts l}
-    File.write('data/out.txt', @memory.join)
+
+
+    puts separator
+    footer =  "Total Lines \t= #{@total_original_lines}\n"
+    footer += "Uniq Lines \t= #{@uniq_lines}"
+    puts footer
+    puts separator
+
+    File.open('data/out.txt', 'w') do |f|
+      # require 'pry'; binding.pry
+      f << "rspec #{@memory.join.gsub('rspec ', '').gsub("\n", ' ')}"
+      f << "\n\n#{separator}FILES\n#{separator}\n\n"
+      f << @memory.join
+      f << "\n\n#{footer}"
+    end
+
     @uniq_lines = @memory.length
 
-    puts '_'*50
-    puts "Total Lines \t= #{@total_original_lines}"
-    puts "Uniq Lines \t= #{@uniq_lines}"
-    puts '_'*50
   end
 
   private
@@ -34,6 +45,10 @@ class RspecProcessor
 
   def remove_noise
     line.sub!(/rb(.*)/, 'rb')
+  end
+
+  def separator
+    '_'*50+"\n"
   end
 end
 
