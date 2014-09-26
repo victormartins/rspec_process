@@ -4,15 +4,25 @@ class RspecProcessor
     @total_original_lines = 0
     @uniq_lines           = 0
 
+    process_file
+    output_results
+  end
+
+  private
+  attr_reader :line, :memory
+
+  def process_file
     File.open('data/in.txt', 'r') do |f|
       f.each_line do |line|
         @total_original_lines += 1
         process line
       end
     end
+    @uniq_lines = memory.length
+  end
 
-    @memory.each{ |l| puts l}
-
+  def output_results
+    memory.each{ |l| puts l}
 
     puts separator
     footer =  "Total Lines \t= #{@total_original_lines}\n"
@@ -22,25 +32,19 @@ class RspecProcessor
 
     File.open('data/out.txt', 'w') do |f|
       # require 'pry'; binding.pry
-      f << "rspec #{@memory.join.gsub('rspec ', '').gsub("\n", ' ')}"
+      f << "rspec #{memory.join.gsub('rspec ', '').gsub("\n", ' ')}"
       f << "\n\n#{separator}FILES\n#{separator}\n\n"
-      f << @memory.join
+      f << memory.join
       f << "\n\n#{footer}"
     end
-
-    @uniq_lines = @memory.length
-
   end
-
-  private
-  attr_reader :line, :memory
 
   def process line
     @line = line
     return unless line.match /rspec/
     remove_noise
 
-    @memory << line unless memory.include? line
+    memory << line unless memory.include? line
   end
 
   def remove_noise
